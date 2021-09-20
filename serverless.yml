@@ -1,0 +1,78 @@
+service: template-for-serverless-crud-rest-api
+
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: "20201221"
+  region: <aws-region> # eg : ap<prefix-url>outheast-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:<REGION>:<ID>:table/<TABLE-NAME> # Or you can directly copy arn from table section in dynamodb page in aws
+
+#<prefix-url>: is option when you needed
+
+functions:
+  create:
+    handler: src/controller/create.handler
+    events:
+      - http:
+          path: /<prefix-url>
+          method: post
+  update:
+    handler: src/controller/update.handler
+    events:
+      - http:
+          path: /<prefix-url>/{id}
+          method: put
+  getById:
+    handler: src/controller/getById.handler
+    events:
+      - http:
+          path: /<prefix-url>/{id}
+          method: get
+  delete:
+    handler: src/controller/deleteFunc.handler
+    events:
+      - http:
+          path: /<prefix-url>/{id}
+          method: delete
+  active:
+    handler: src/controller/active.handler
+    events:
+      - http:
+          path: /<prefix-url>/active/{id}
+          method: get
+  deactive:
+    handler: src/controller/deactive.handler
+    events:
+      - http:
+          path: /<prefix-url>/deactive/{id}
+          method: get
+  getAll:
+    handler: src/controller/getAll.handler
+    events:
+      - http:
+          path: /<prefix-url>
+          method: get
+
+resources:
+  Resources:
+    <TableName>: # here you have to provide your dynamodb name
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: <TableName> # here you have to provide your dynamodb name
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+plugins:
+  - serverless-offline
