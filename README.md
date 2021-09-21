@@ -139,3 +139,5 @@ offline: Enter "rp" to replay the last request
   └──────────────────────────────────────────────────────────────────────────────┘
 
 ```
+
+# When you writting your business logic in this code you should inintilize your empty repo via `git init`
